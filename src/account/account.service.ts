@@ -130,7 +130,7 @@ export class AccountService {
   }
 
   async getAccountById(uuid: string): Promise<Account> {
-    const found = this.account.find(account => account.uuid === uuid);
+    const found = await this.account.find(account => account.uuid === uuid);
     return new Promise((resolve, reject) => {
       if (found) {
         return resolve(found);

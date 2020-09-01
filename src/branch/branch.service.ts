@@ -7,6 +7,7 @@ import {
 } from './dto/branch';
 import { v4 as uuidv4 } from 'uuid';
 import { resolve } from 'path';
+import { throwError } from 'rxjs';
 
 @Injectable()
 export class BranchService {
@@ -28,7 +29,9 @@ export class BranchService {
       branch.landingPhone = landingPhone;
       branch.workshop = workshop;
 
-      const branchValidation = (name: string) => {
+      let branchValidation: (name: string) => void;
+
+      branchValidation = name => {
         const findBranch = this.branch.find(branch => branch.name === name);
         if (!findBranch) {
           const branch = this.branch.push;
@@ -51,33 +54,39 @@ export class BranchService {
   }
 
   async getBranchByUuid(uuid: IUuidBranchDto): Promise<Branch> {
-    const findBranch = this.branch.find(branch => branch.uuid === uuid.uuid);
-    if (!findBranch) {
-      throw new NotFoundException(`branch with  "${uuid}" not found`);
-    } else {
-      return findBranch;
-    }
+    return new Promise((resolve, reject) => {
+      const findBranch = this.branch.find(branch => branch.uuid === uuid.uuid);
+      if (!findBranch) {
+        return reject(`branch with  "${uuid}" not found`);
+      } else {
+        return resolve(findBranch);
+      }
+    });
   }
 
-  async updateBranch(
-    uuid: IUuidBranchDto,
-    update: IUpdateBranchDto,
-  ): Promise<Branch> {
-    const findBranch = await this.getBranchByUuid(uuid);
-    if (findBranch.name) {
-      findBranch.name = update.name;
-    }
-    if (findBranch.corporateUuid) {
-      findBranch.corporateUuid = update.corporateUuid;
-    }
-    if (findBranch.landingPhone) {
-      findBranch.landingPhone = update.landingPhone;
-    }
-    if (findBranch.workshop) {
-      findBranch.workshop = update.workshop;
-    }
-
-    return findBranch;
+  async updateBranch(uuid: IUuidBranchDto, update: IUpdateBranchDto) {
+    return new Promise(async (resolve, reject) => {
+      const findBranch = await this.getBranchByUuid(uuid);
+      const updateFindBranch =
+        findBranch.name ||
+        findBranch.corporateUuid ||
+        findBranch.landingPhone ||
+        findBranch.workshop;
+      if (updateFindBranch) {
+        return resolve(
+          'account updated' +
+            ((findBranch.name = update.name),
+            (findBranch.corporateUuid = update.corporateUuid),
+            (findBranch.landingPhone = update.landingPhone),
+            (findBranch.workshop = update.workshop)),
+        );
+      }
+      if (!updateFindBranch) {
+        return reject(throwError);
+      }
+    }).then(updateBranch => {
+      return { ...this.branch };
+    });
   }
 }
 

@@ -155,7 +155,7 @@ export class AccountService {
         found.phone ||
         found.product
       ) {
-        resolve(
+        return resolve(
           'account updated' +
             ((found.username = body.username),
             (found.password = body.password),
@@ -168,7 +168,7 @@ export class AccountService {
       }
     })
       .then(updateAccount => {
-        console.log(updateAccount);
+        return { ...found };
       })
       .catch(error => {
         console.log(error);

@@ -29,7 +29,7 @@ export class BranchController {
   async updateBranch(
     @Param() uuid: IUuidBranchDto,
     @Body() update: IUpdateBranchDto,
-  ): Promise<Branch> {
+  ) {
     return this.branchService.updateBranch(uuid, update);
   }
 }

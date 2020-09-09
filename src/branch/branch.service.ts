@@ -34,8 +34,8 @@ export class BranchService {
       branchValidation = name => {
         const findBranch = this.branch.find(branch => branch.name === name);
         if (!findBranch) {
-          const branch2 = this.branch.push(branch);
-          return resolve(branch2);
+          this.branch.push(branch);
+          return resolve({ ...branch });
         } else {
           return reject('branch already exist');
         }
@@ -44,7 +44,7 @@ export class BranchService {
       branchValidation(name);
     })
       .then(branch => {
-        return { branch };
+        return { branch: branch };
       })
       .catch(error => error);
   }

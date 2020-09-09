@@ -3,13 +3,13 @@ import { ICreateAccountDto, IUpdateAccountDto } from './dto/account';
 import { v4 as uuidv4 } from 'uuid';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Account_ } from './schemas/account.schema';
+import { AccountSchema } from './schemas/account.schema';
 import { Account } from './account.model';
 
 @Injectable()
 export class AccountService {
   // constructor(
-  //   @InjectModel(Account_.name) private accountModel: Model<Account_>,
+  //   @InjectModel('Account') private readonly accountModel: Model<AccountSchema>,
   // ) {}
 
   private account: Account[] = [];

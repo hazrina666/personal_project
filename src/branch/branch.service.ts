@@ -34,8 +34,8 @@ export class BranchService {
       branchValidation = name => {
         const findBranch = this.branch.find(branch => branch.name === name);
         if (!findBranch) {
-          const branch = this.branch.push;
-          return resolve(branch);
+          const branch2 = this.branch.push(branch);
+          return resolve(branch2);
         } else {
           return reject('branch already exist');
         }
@@ -44,7 +44,7 @@ export class BranchService {
       branchValidation(name);
     })
       .then(branch => {
-        return resolve('branch created') + branch;
+        return { branch };
       })
       .catch(error => error);
   }
@@ -67,26 +67,16 @@ export class BranchService {
   async updateBranch(uuid: IUuidBranchDto, update: IUpdateBranchDto) {
     return new Promise(async (resolve, reject) => {
       const findBranch = await this.getBranchByUuid(uuid);
-      const updateFindBranch =
-        findBranch.name ||
-        findBranch.corporateUuid ||
-        findBranch.landingPhone ||
-        findBranch.workshop;
-      if (updateFindBranch) {
-        return resolve(
-          'account updated' +
-            ((findBranch.name = update.name),
-            (findBranch.corporateUuid = update.corporateUuid),
-            (findBranch.landingPhone = update.landingPhone),
-            (findBranch.workshop = update.workshop)),
-        );
-      }
-      if (!updateFindBranch) {
+      if (findBranch) {
+        return resolve('branch updated' + Object.assign(findBranch, update));
+      } else {
         return reject(throwError);
       }
-    }).then(updateBranch => {
-      return { ...this.branch };
-    });
+    })
+      .then(updateBranch => {
+        return { ...this.branch };
+      })
+      .catch(Error);
   }
 }
 

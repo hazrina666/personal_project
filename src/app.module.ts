@@ -11,6 +11,11 @@ import { AccountModule } from './account/account.module';
 import { BranchController } from './branch/branch.controller';
 import { BranchService } from './branch/branch.service';
 import { BranchModule } from './branch/branch.module';
+import { Connection } from 'typeorm';
+import config from './config/keys';
+import { UserService } from './user/user.service';
+import { UserController } from './user/user.controller';
+import { UserModule } from './user/user.module';
 @Module({
   imports: [
     VehicleModule,
@@ -18,9 +23,9 @@ import { BranchModule } from './branch/branch.module';
     BranchModule,
     AccountModule,
 
-    MongooseModule.forRoot(
-      'mongodb+srv://rina123456:rina123456@cluster0.icqqs.mongodb.net/<dbname>?retryWrites=true&w=majority',
-    ),
+    // MongooseModule.forRoot(config.mongoURI),
+
+    UserModule,
   ],
   controllers: [
     AppController,
@@ -28,8 +33,15 @@ import { BranchModule } from './branch/branch.module';
     AccountController,
     BranchController,
     AccountController,
+    UserController,
   ],
-  providers: [AppService, VehicleService, AccountService, BranchService],
+  providers: [
+    AppService,
+    VehicleService,
+    AccountService,
+    BranchService,
+    UserService,
+  ],
 })
 export class AppModule {}
 
